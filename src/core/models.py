@@ -16,11 +16,3 @@ class Message(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-
-
-@receiver(m2m_changed, sender=Thread.participants.through)
-def participants_changed(sender, instance, **kwargs):
-    if kwargs['action'] == 'pre_add':
-        participant_count = instance.participants.count() + len(kwargs['pk_set'])
-        if participant_count > 2:
-            raise ValidationError('A Thread can have only up to 2 participants.')
